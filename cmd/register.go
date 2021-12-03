@@ -23,11 +23,13 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 
+	"github.com/TheLazyLemur/project-cli/config"
 	"github.com/TheLazyLemur/project-cli/data"
 	"github.com/spf13/cobra"
 )
@@ -41,6 +43,11 @@ var registerCmd = &cobra.Command{
 	Short: "Register a new project",
 	Long:  `Register a new project providing it the project alias name, project directory and preferred editor`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		c, err := config.GetConfig()
+		if err != nil {
+			log.Fatal("error: " + err.Error())
+		}
 
 		newEntry := &data.Entry{
 			Alias:     alias,
@@ -58,14 +65,16 @@ var registerCmd = &cobra.Command{
 		val := string(b)
 		data := []byte(val)
 
-		err = ioutil.WriteFile("/home/dan/.config/project-cli/"+alias, data, 0)
+		if _, err := os.Stat(c.StoreDirectory + alias); errors.Is(err, os.ErrNotExist) {
 
-		if err != nil {
-			log.Fatal(err)
+			err = ioutil.WriteFile(c.StoreDirectory+alias, data, 0)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			err = os.Chmod(c.StoreDirectory+alias, 0700)
+
 		}
-
-		err = os.Chmod("/home/dan/.config/project-cli/"+alias, 0700)
-
 	},
 }
 

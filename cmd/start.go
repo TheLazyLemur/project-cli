@@ -25,7 +25,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 
+	"github.com/TheLazyLemur/project-cli/config"
 	"github.com/TheLazyLemur/project-cli/data"
 	commands "github.com/TheLazyLemur/project-cli/utils"
 	"github.com/spf13/cobra"
@@ -36,8 +38,12 @@ var startCmd = &cobra.Command{
 	Short: "Open project",
 	Long:  `Open a previosuly specified project`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(alias)
-		text, err := ioutil.ReadFile("/home/dan/.config/project-cli/" + alias)
+		c, err := config.GetConfig()
+		if err != nil {
+			log.Fatal("error: " + err.Error())
+		}
+
+		text, err := ioutil.ReadFile(c.StoreDirectory + alias)
 
 		if err != nil {
 			fmt.Println(err)
