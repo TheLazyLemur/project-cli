@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"log"
 	"os"
 )
 
@@ -11,8 +12,14 @@ type Config struct {
 }
 
 func GetConfig() (*Config, error) {
+
+	dirname, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	c := new(Config)
-	b, err := os.ReadFile("/home/dan/.config/project-cli/config.json")
+	b, err := os.ReadFile(dirname + "/.config/project-cli/config.json")
 	if err != nil {
 		return nil, err
 	}
