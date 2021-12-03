@@ -26,6 +26,7 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/TheLazyLemur/project-cli/config"
 	"github.com/spf13/cobra"
 )
 
@@ -35,13 +36,21 @@ var listCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		files, err := ioutil.ReadDir("/home/dan/.config/project-cli/")
+		c, err := config.GetConfig()
+		if err != nil {
+			log.Fatal("error: " + err.Error())
+		}
+
+		files, err := ioutil.ReadDir(c.StoreDirectory)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		for _, file := range files {
-			fmt.Println(file.Name(), file.IsDir())
+			n := file.Name()
+			if !file.IsDir() && n != "config.json" {
+				fmt.Println(file.Name())
+			}
 		}
 
 	},
