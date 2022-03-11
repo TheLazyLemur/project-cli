@@ -36,7 +36,7 @@ import (
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Open project",
-	Long:  `Open a previosuly specified project`,
+	Long:  `Open a previously registered project alias`,
 	Run: func(cmd *cobra.Command, args []string) {
 		c, err := config.GetConfig()
 		if err != nil {
